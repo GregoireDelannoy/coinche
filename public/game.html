@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="src/bootstrap.min.css">
+        <style type="text/css">
+.wrapper {
+  display: grid;
+  grid-gap: 2px;
+  grid-auto-rows: minmax(30px, auto);
+}
+.less_used.actions {
+    grid-column: 1;
+    grid-row: 1 / 3;
+}
+.more_used.actions {
+    grid-column: 5;
+    grid-row: 1 / 3;
+}
+.actions > button{
+    margin-bottom: 1px;
+}
+.player_top {
+    grid-column: 3;
+    grid-row: 1;
+}
+.player_left {
+    grid-column: 1;
+    grid-row: 3;
+}
+.uselessButMakesLayoutWork{
+    grid-column: 1;
+    grid-row: 4;
+}
+.table_center {
+    grid-column: 2 / 5;
+    grid-row: 2 / 5;
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+    gap: 2px;
+    grid-auto-rows: minmax(30px, auto);
+}
+#modalPliContent {
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+    gap: 2px;
+    grid-auto-rows: minmax(30px, auto);
+}
+.player_right {
+    grid-column: 5;
+    grid-row: 3;
+}
+.actions_bottom {
+    grid-column: 2 / 5;
+    grid-row: 5;
+}
+.cards_bottom {
+    grid-column: 1 / 6;
+    grid-row: 6 / 7;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.box {
+    background-color: black;
+    border-radius: 5px;
+    padding: 1px;
+}
+.innerBox {
+    background-color: #28a745;
+    border-radius: 5px;
+    padding: 1px;
+}
+.atoutHint {
+    font-weight: bold;
+    font-size: x-large;
+}
+img {
+    max-width: 13vw;
+    max-height: 26vh;
+}
+div {
+    text-align: center;
+}
+
+.bottom_card_container {
+    padding-right: 0.5vw;
+}
+
+.fg-light {
+    color: white;
+}
+
+#modalStart{
+    color: black;
+}
+
+#table_card_container_left   { grid-row: 2 / 5; grid-column:1; }
+#table_card_container_top    { grid-row: 1 / 3; grid-column:2; }
+#table_card_container_right  { grid-row: 2 / 5; grid-column:3; }
+#table_card_container_bottom { grid-row: 4 / 8; grid-column:2; }
+
+#pli_card_container_left   { grid-row: 2 / 5; grid-column:1; }
+#pli_card_container_top    { grid-row: 1 / 3; grid-column:2; }
+#pli_card_container_right  { grid-row: 2 / 5; grid-column:3; }
+#pli_card_container_bottom { grid-row: 4 / 8; grid-column:2; }
+        </style>
+    </head>
+    <body class="bg-dark fg-light">
+        <div class="wrapper">
+            <div class="actions more_used">
+                <button class="btn btn-primary" onclick="startNewGame()">Redistribuer</button><br>
+                <div class="dropdown" style='display: inline;'>
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Atout ?
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        <button class="dropdown-item" type="button" onclick="setAtout('hearts')">Coeur</button>
+                        <button class="dropdown-item" type="button" onclick="setAtout('clubs')">Trèfle</button>
+                        <button class="dropdown-item" type="button" onclick="setAtout('diamonds')">Carreau</button>
+                        <button class="dropdown-item" type="button" onclick="setAtout('spades')">Pique</button>
+                    </div>
+                </div><br>
+                <span id="currentAtout"></span>
+            </div>
+            <div class="actions less_used">
+                <button class="btn btn-info" onclick="start()">Choix Pseudo/Emplacement</button><br>
+                <button class="btn btn-danger" onclick="reset()">RESET</button><br>
+                <button class="btn btn-warning" onclick="undo()">ANNULER ACTION</button><br>
+            </div>
+            <div class="box player_top"><span id="pseudo_top"></span> / <span id="points_top"></span></div>
+            <div class="uselessButMakesLayoutWork"></div>
+            <div class="box player_left"><span id="pseudo_left"></span><br><span id="points_left"></span></div>
+            <div class="box table_center">
+                <div class="innerBox" id="table_card_container_left"><img id="table_card_left" src=""></div>
+                <div class="innerBox" id="table_card_container_top"><img id="table_card_top" src=""></div>
+                <div class="innerBox" id="table_card_container_right"><img id="table_card_right" src=""></div>
+                <div class="innerBox" id="table_card_container_bottom"><img id="table_card_bottom" src=""></div>
+            </div>
+            <div class="box player_right"><span id="pseudo_right"></span><br><span id="points_right"></span><br></div>
+            <div class="box actions_bottom">
+                <span id="pseudo_bottom"></span> / <span id="points_bottom"></span>
+                <button class="btn btn-success" onclick="grabTableCards()">Prendre cartes</button>
+                <button class="btn btn-primary" onclick="showLatestPli()">Voir dernier pli</button>
+                
+            </div>
+            <div class="box cards_bottom">
+                <div class="bottom_card_container"><img id="card0" onclick="play(0)" src=""></div>
+                <div class="bottom_card_container"><img id="card1" onclick="play(1)" src=""></div>
+                <div class="bottom_card_container"><img id="card2" onclick="play(2)" src=""></div>
+                <div class="bottom_card_container"><img id="card3" onclick="play(3)" src=""></div>
+                <div class="bottom_card_container"><img id="card4" onclick="play(4)" src=""></div>
+                <div class="bottom_card_container"><img id="card5" onclick="play(5)" src=""></div>
+                <div class="bottom_card_container"><img id="card6" onclick="play(6)" src=""></div>
+                <div class="bottom_card_container"><img id="card7" onclick="play(7)" src=""></div>
+            </div>
+        </div>
+        <div class="modal" id="modalPli" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div id="modalPliContent">
+                    <div class="innerBox" id="pli_card_container_left"><img id="pli_card_left" src=""></div>
+                    <div class="innerBox" id="pli_card_container_top"><img id="pli_card_top" src=""></div>
+                    <div class="innerBox" id="pli_card_container_right"><img id="pli_card_right" src=""></div>
+                    <div class="innerBox" id="pli_card_container_bottom"><img id="pli_card_bottom" src=""></div>
+                </div>
+            </div>
+            <button id="pli_previous" class="btn btn-secondary" disabled>Pli Précédent</button>
+            <button id="pli_next" class="btn btn-secondary" disabled>Pli Suivant</button>
+        </div>
+        <div class="modal fade" id="modalStart" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h4 class="modal-title w-100 font-weight-bold">Connexion</h4>
+                    </button>
+                </div>
+                <div class="modal-body mx-3">
+                    <div class="md-form mb-5">
+                    <i class="fas fa-envelope prefix grey-text"></i>
+                    <input type="text" class="form-control" id="input_pseudo" placeholder="Pseudo">
+                    <label>Pseudo</label>
+                    </div>
+
+                    <div class="md-form mb-4">
+                    <i class="fas fa-lock prefix grey-text"></i>
+                    <select class="form-control" id="select_id">
+                        <option>0</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                    </select>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button class="btn btn-default" onclick="setPseudoId()">Login</button>
+                </div>
+                </div>
+            </div>
+        </div>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="src/jquery-3.2.1.slim.min.js"></script>
+        <script src="src/popper.min.js"></script>
+        <script src="src/bootstrap.min.js"></script>
+        <script>
+var socket = io();
+var pseudo = null;
+var id = null;
+
+function showStack(player){
+    target = (id + {'me': 0, 'left': 1, 'top': 2, 'right': 3}[player]) % 4;
+    socket.emit('showStack', target, id);
+}
+
+function setPseudoId(){
+    pseudo = document.getElementById('input_pseudo').value;
+    id = parseInt(document.getElementById('select_id').value);
+    handleGameStart();
+}
+
+function handleShowPli(pli, index){
+    if(pli){
+        for(var i = 0; i < 4; i++){
+            var img = document.getElementById('pli_card_' + idToPosition(i));
+            if(pli[i] == null){
+                img.src = 'img/empty.png';
+            } else {
+                img.src = 'img/' + pli[i];
+            }
+        }
+        document.getElementById('pli_previous').onclick = () => socket.emit('showPli', index - 1);
+        document.getElementById('pli_next').onclick = () => socket.emit('showPli', index + 1);
+        $('#modalPli').modal('show')
+    }
+}
+
+function handleSetDeck(deck){
+    if (deck.length == 0){
+        document.getElementById('pli_previous').disabled = false;
+        document.getElementById('pli_next').disabled = false;
+    } else {
+        document.getElementById('pli_previous').disabled = true;
+        document.getElementById('pli_next').disabled = true;
+    }
+    for(var i = 0; i < 8; i++){
+        if(i < deck.length){
+            document.getElementById('card' + i).setAttribute('src', 'img/' + deck[i]);
+        } else {
+            document.getElementById('card' + i).src = 'img/empty.png';
+        }
+    }
+}
+
+function setAtout(atout){
+    socket.emit('setAtout', atout);
+}
+
+function showLatestPli(){
+    socket.emit('showLatestPli');
+}
+
+function handleSetPseudos(pseudos, points){
+    for(var i = 0; i < 4; i++){
+        document.getElementById('pseudo_' + idToPosition(i)).innerHTML = pseudos[i];
+        document.getElementById('points_' + idToPosition(i)).innerHTML = points[i];
+    }
+}
+
+function idToPosition(queryId){
+    const RES = ['bottom', 'left', 'top', 'right'];
+    return RES[((queryId + 4) - id) % 4]
+}
+
+function handleSetTable(table){
+    for(var i = 0; i < 4; i++){
+        var img = document.getElementById('table_card_' + idToPosition(i));
+        if(table[i] == null){
+            img.src = 'img/empty.png';
+        } else {
+            img.src = 'img/' + table[i];
+        }
+    }
+}
+
+function handleSetAtout(atout){
+    var el = document.getElementById('currentAtout');
+    switch (atout) {
+        case 'spades':
+            el.innerHTML = 'Atout en cours:<br><span class="atoutHint">♠ Pique</span>';
+            break;
+        case 'hearts':
+            el.innerHTML = 'Atout en cours:<br><span class="atoutHint">♥ Coeur</span>';
+            break;
+        case 'clubs':
+            el.innerHTML = 'Atout en cours:<br><span class="atoutHint">♣ Trèfle</span>';
+            break;
+        case 'diamonds':
+            el.innerHTML = 'Atout en cours:<br><span class="atoutHint">♦ Carreau</span>';
+            break;
+        default:
+            el.innerHTML = "Pas d'atout en cours";
+            break;
+    }
+}
+
+function handleGameStart(){
+    if (pseudo == null || id == null || id == NaN || pseudo.length < 2 || id > 3 || id < 0){
+        alert('Pseudo ne doit pas être vide !');
+    } else {
+        $('#modalStart').modal('hide');
+        socket.emit('start', pseudo, id);
+    }
+}
+
+function handleGameError(msg){
+    alert(msg);
+}
+
+socket.on('showPli', handleShowPli);
+socket.on('setDeck', handleSetDeck);
+socket.on('setTable', handleSetTable);
+socket.on('setPseudos', handleSetPseudos);
+socket.on('setAtout', handleSetAtout);
+socket.on('gameStart', handleGameStart);
+socket.on('gameError', handleGameError);
+
+function startNewGame(){
+    socket.emit('startNewGame');
+}
+
+function reset(){
+    if (confirm('Recommence toute la partie à zéro !!! Pour seulement redistribuer correctement, utiliser "redistribuer".')){
+        socket.emit('reset');
+    }
+}
+
+function undo(){
+    if (confirm('Annule la dernière action, de n\'importe quel joueur')){
+        socket.emit('undo');
+    }
+}
+
+function grabTableCards(){
+    socket.emit('grabTableCards', id);
+}
+
+function play(index){
+    socket.emit('play', index, id);
+}
+
+function start(){
+    $('#modalStart').modal('show');
+}
+
+start();
+        </script>
+    </body>
+</html>

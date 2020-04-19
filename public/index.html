@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="src/bootstrap.min.css">
+        <style>
+.center_div{
+    margin: 0 auto;
+    width:60% /* value of your choice which suits your alignment */
+}
+        </style>
+    </head>
+    <body>
+        <div class="center_div">
+            <h1>La Coinche.</h1>
+            <p>Pour rejoindre une partie, demandez à la personne que vous voulez rejoindre de copier/coller son URL.</p>
+            <p>Pour créer une nouvelle partie, cliquez ici : </p><button class="btn btn-primary" onclick="newGame()">Nouvelle Table</button>
+            <div id='linkContainer'></div>
+        </div>
+        <script>
+function newGame(){
+    var rnd = Math.random().toString().split('.')[1];
+    var url = window.location.toString().replace('index.html', '') + '/game.html?' + rnd;
+    url = url.replace('//game', '/game');
+    document.getElementById('linkContainer').innerHTML = '<a href="' + url + '">' + url + '</a>';
+}
+        </script>
+    </body>
+</html>
