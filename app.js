@@ -17,7 +17,7 @@ const CARDS = [ '10_of_clubs.png', '10_of_diamonds.png', '10_of_hearts.png', '10
 
 function sortCards(deck){
     var newDeck = [];
-    for (const color of ['hearts', 'clubs', 'spades', 'diamonds']){
+    for (const color of ['clubs', 'hearts', 'spades', 'diamonds']){
         for (const val of ['ace', '10', 'king', 'queen', 'jack', '9', '8', '7']){
             for(let i = 0; i < deck.length; i++){
                 if(deck[i].startsWith(val + '_of_' + color)){
@@ -140,6 +140,7 @@ function resetGame(){
     resetState();
     history = [];
     giveRandom();
+    sortAllDecks();
 
     broadcast('gameStart');
 }
@@ -281,7 +282,7 @@ function initGame(socket){
             'atout': null,
         },
         'sockets': [socket],
-        'ctime': (Date.now() / 360000),
+        'ctime': (Date.now() / 3600000),
     }
 }
 
@@ -318,8 +319,8 @@ function selectGame(socket){
 
 function purgeGames(){
     for (entry of Object.keys(games)){
-        if(games[entry]['ctime'] < (Date.now() / 360000) - 12){
-            console.log('Game active for more than 12 hours, deleting: ' + entry);
+        if(games[entry]['ctime'] < (Date.now() / 3600000) - 24){
+            console.log('Game active for more than 24 hours, deleting: ' + entry);
             delete games[entry];
         }
     }
@@ -339,6 +340,6 @@ io.on('connection', function(socket){
     socket.on('setAtout', (atout) => {selectGame(socket) && handleSetAtout(atout)});
 });
 
-http.listen(3000, function(){
-  console.log('listening on *:3000');
+http.listen(8003, function(){
+  console.log('listening on *:8003');
 });
